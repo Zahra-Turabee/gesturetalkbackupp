@@ -8,6 +8,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gesturetalk1/constants/app_colors.dart'; // <-- Make sure this import path is correct
 
 class AlarmModel {
   final TimeOfDay time;
@@ -40,7 +41,6 @@ class FlashlightAlarmScreen extends StatefulWidget {
 class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   final List<AlarmModel> _alarms = [];
   bool _alarmGoingOff = false;
 
@@ -222,8 +222,16 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Flashlight Alarm')),
+      appBar: AppBar(
+        title: const Text('Flashlight Alarm'),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+      ),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           if (_alarmGoingOff)
@@ -232,6 +240,10 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
               color: Colors.red,
               padding: const EdgeInsets.all(10),
               child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                ),
                 onPressed: _stopAlarm,
                 icon: const Icon(Icons.stop),
                 label: const Text("Stop Alarm"),
@@ -240,17 +252,34 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
           Expanded(
             child:
                 _alarms.isEmpty
-                    ? const Center(child: Text("No alarms set"))
+                    ? Center(
+                      child: Text(
+                        "No alarms set",
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    )
                     : ListView.builder(
                       itemCount: _alarms.length,
                       itemBuilder: (context, index) {
                         final alarm = _alarms[index];
                         return ListTile(
-                          leading: const Icon(Icons.alarm),
-                          title: Text(alarm.label),
-                          subtitle: Text("Time: ${alarm.time.format(context)}"),
+                          leading: Icon(
+                            Icons.alarm,
+                            color: theme.iconTheme.color,
+                          ),
+                          title: Text(
+                            alarm.label,
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          subtitle: Text(
+                            "Time: ${alarm.time.format(context)}",
+                            style: theme.textTheme.bodySmall,
+                          ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete),
+                            icon: Icon(
+                              Icons.delete,
+                              color: theme.iconTheme.color,
+                            ),
                             onPressed: () => _deleteAlarm(index),
                           ),
                         );
@@ -261,6 +290,8 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pickTime(context),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: isDark ? kPrimaryColor : Colors.white,
         child: const Icon(Icons.add),
       ),
     );

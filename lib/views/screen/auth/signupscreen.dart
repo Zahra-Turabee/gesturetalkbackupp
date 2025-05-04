@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dashboardscreen.dart';
-import 'signupscreen.dart';
+import 'loginscreen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String errorMessage = '';
   final _supabase = Supabase.instance.client;
+  String errorMessage = '';
   bool isLoading = false;
 
-  // Function to handle the login process
-  Future<void> login() async {
-    if (emailController.text.trim().isEmpty ||
-        passwordController.text.trim().isEmpty) {
+  Future<void> _signup() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
       setState(() {
         errorMessage = 'Please enter both email and password.';
       });
@@ -28,24 +28,27 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() {
-      isLoading = true;
       errorMessage = '';
+      isLoading = true;
     });
 
     try {
-      final response = await _supabase.auth.signInWithPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      final response = await _supabase.auth.signUp(
+        email: email,
+        password: password,
       );
 
-      if (response.session == null) {
+      if (response.user == null) {
         setState(() {
-          errorMessage = 'Invalid email or password.';
+          errorMessage = 'Signup failed. Please try again.';
         });
       } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Signup successful!')));
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
       }
     } on AuthException catch (e) {
@@ -56,18 +59,19 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         errorMessage = 'Something went wrong. Please try again.';
       });
-      print('Login Error: $e');
+      print('Signup error: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -76,41 +80,52 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo
-                Image.asset(
-                  'lib/assets/images/logo.png', // Ensure the logo file exists
-                  height: 95,
-                ),
+                Image.asset('assets/images/logo.png', height: 95),
                 const SizedBox(height: 40),
 
-                // Email TextField
+                // Email
                 TextField(
                   controller: emailController,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[700],
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    prefixIcon: const Icon(Icons.email),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: isDark ? Colors.white70 : Colors.grey,
+                    ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 20),
 
-                // Password TextField
+                // Password
                 TextField(
                   controller: passwordController,
                   obscureText: true,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[700],
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    prefixIcon: const Icon(Icons.lock),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: isDark ? Colors.white70 : Colors.grey,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                // Error Message
+                // Error
                 if (errorMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -120,12 +135,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                // Login Button
+                // Signup Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : login,
+                    onPressed: isLoading ? null : _signup,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -141,26 +158,34 @@ class _LoginScreenState extends State<LoginScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                            : const Text('Login'),
+                            : const Text(
+                              'Sign Up',
+                              style: TextStyle(fontSize: 16),
+                            ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Sign-up link
+                // Login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account?"),
+                    Text(
+                      "Already have an account?",
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SignupScreen(),
+                            builder: (_) => const LoginScreen(),
                           ),
                         );
                       },
-                      child: const Text('Sign up'),
+                      child: const Text('Login'),
                     ),
                   ],
                 ),

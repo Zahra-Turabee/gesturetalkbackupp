@@ -1,60 +1,50 @@
 import 'package:flutter/material.dart';
-//import 'package:gesturetalk1/pages/dashboardscreen.dart';
-import 'package:gesturetalk1/pages/splashscreen.dart';
-//import 'package:gesturetalk1/pages/splashscreen.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gesturetalk1/pages/loginscreen.dart'; // Import the login screen
+import 'package:gesturetalk1/views/screen/launch/splashscreen.dart';
+import 'package:gesturetalk1/config/theme/light_theme.dart';
+import 'package:gesturetalk1/config/theme/dark_theme.dart';
+import 'package:gesturetalk1/controller/theme_controller.dart'; // Import ThemeController
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase
   await Supabase.initialize(
     anonKey:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmaG9yem9yY3RzamdycWVleGt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2OTE4NDcsImV4cCI6MjA2MTI2Nzg0N30.8Z2yiVATZQG4lfLJW17VhUZXepGSvmJD3f4VpVeg0hM",
     url: "https://ffhorzorctsjgrqeexkt.supabase.co",
   );
 
+  // Initialize GetStorage
+  await GetStorage.init();
+
+  // Initialize ThemeController globally
+  Get.put(ThemeController()); // This initializes the ThemeController globally
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.light; // Default theme is light
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTheme();
-  }
-
-  // Load the saved theme from SharedPreferences
-  void _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool isDarkMode = prefs.getBool('isDarkMode') ?? false; // Default to light
-    setState(() {
-      _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    final ThemeController _themeController =
+        Get.find<
+          ThemeController
+        >(); // Use Get.find() to access the ThemeController
+
+    return GetMaterialApp(
       title: 'GestureTalk',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      darkTheme: ThemeData.dark(),
-      themeMode: _themeMode, // Use the theme mode (light or dark)
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: _themeController.theme, // This controls the global theme
+      defaultTransition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 500),
       home: SplashScreen(),
-      routes: {
-        '/login': (context) => const LoginScreen(), // Add the login route here
-      },
     );
   }
 }

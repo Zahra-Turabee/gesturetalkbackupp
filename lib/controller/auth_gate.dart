@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gesturetalk1/pages/dashboardscreen.dart';
-import 'package:gesturetalk1/pages/loginscreen.dart';
-import 'package:gesturetalk1/auth/auth_service.dart';
+import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
+import 'package:gesturetalk1/views/screen/auth/loginscreen.dart';
+import 'package:gesturetalk1/controller/auth_service.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -27,7 +27,7 @@ class _AuthGateState extends State<AuthGate> {
         // User is authenticated, navigate to Dashboard
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(builder: (context) => DashboardScreen()),
         );
       } else {
         // User is not authenticated, navigate to Login Page
