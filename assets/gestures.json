@@ -1,0 +1,255 @@
+{
+  "hello": [
+    "assets/offlinegestures/hello/hello1.png",
+    "assets/offlinegestures/hello/hello2.png",
+    "assets/offlinegestures/hello/hello3.png"
+  ],
+  "goodmorning": [
+    "assets/offlinegestures/goodmorning/goodmorning1.png",
+    "assets/offlinegestures/goodmorning/goodmorning2.png",
+    "assets/offlinegestures/goodmorning/goodmorning3.png"
+  ],
+  "help": [
+    "assets/offlinegestures/help/help1.png",
+    "assets/offlinegestures/help/help2.png"
+  ],
+  "fire": [
+    "assets/offlinegestures/fire/fire1.png",
+    "assets/offlinegestures/fire/fire2.png",
+    "assets/offlinegestures/fire/fire3.png"
+  ],
+  "police": [
+    "assets/offlinegestures/police/police1.png",
+    "assets/offlinegestures/police/police2.png"
+  ],
+  "hospital": [
+    "assets/offlinegestures/hospital/hospital1.png",
+    "assets/offlinegestures/hospital/hospital2.png"
+  ],
+  "no": [
+    "assets/offlinegestures/no/no1.png",
+    "assets/offlinegestures/no/no2.png"
+  ],
+  "yes": [
+    "assets/offlinegestures/yes/yes1.png",
+    "assets/offlinegestures/yes/yes2.png"
+  ],
+  "toilet": [
+    "assets/offlinegestures/toilet/toilet1.png",
+    "assets/offlinegestures/toilet/toilet2.png",
+    "assets/offlinegestures/toilet/toilet3.png"
+  ],
+  "hungry": [
+    "assets/offlinegestures/hungry/hungry1.png",
+    "assets/offlinegestures/hungry/hungry2.png",
+    "assets/offlinegestures/hungry/hungry3.png"
+  ],
+  "water": [
+    "assets/offlinegestures/water/water1.png",
+    "assets/offlinegestures/water/water2.png",
+    "assets/offlinegestures/water/water3.png"
+  ],
+  "sick": [
+    "assets/offlinegestures/sick/sick1.png",
+    "assets/offlinegestures/sick/sick2.png",
+    "assets/offlinegestures/sick/sick3.png"
+  ],
+  "pain": [
+    "assets/offlinegestures/pain/pain1.png",
+    "assets/offlinegestures/pain/pain2.png",
+    "assets/offlinegestures/pain/pain3.png"
+  ],
+  "stop": [
+    "assets/offlinegestures/stop/stop1.png",
+    "assets/offlinegestures/stop/stop2.png"
+  ],
+  "thankyou": [
+    "assets/offlinegestures/thankyou/thankyou1.png",
+    "assets/offlinegestures/thankyou/thankyou2.png",
+    "assets/offlinegestures/thankyou/thankyou3.png"
+  ],
+  "sorry": [
+    "assets/offlinegestures/sorry/sorry1.png",
+    "assets/offlinegestures/sorry/sorry2.png",
+    "assets/offlinegestures/sorry/sorry3.png"
+  ],
+  "donttouch": [
+    "assets/offlinegestures/donttouch/donttouch1.png",
+    "assets/offlinegestures/donttouch/donttouch2.png"
+  ],
+  "goodbye": [
+    "assets/offlinegestures/goodbye/bye1.png",
+    "assets/offlinegestures/goodbye/bye2.png"
+  ],
+  "please": [
+    "assets/offlinegestures/please/please1.png",
+    "assets/offlinegestures/please/please2.png"
+  ],
+  "what": [
+    "assets/offlinegestures/what/what1.png",
+    "assets/offlinegestures/what/what2.png"
+  ],
+  "where": [
+    "assets/offlinegestures/where/where1.png",
+    "assets/offlinegestures/where/where2.png"
+  ],
+  "why": [
+    "assets/offlinegestures/why/why1.png",
+    "assets/offlinegestures/why/why2.png",
+    "assets/offlinegestures/why/why3.png"
+  ],
+  "how": [
+    "assets/offlinegestures/how/how1.png",
+    "assets/offlinegestures/how/how2.png",
+    "assets/offlinegestures/how/how3.png"
+  ],
+  "scared": [
+    "assets/offlinegestures/scared/scared1.png",
+    "assets/offlinegestures/scared/scared2.png"
+  ],
+  "sad": [
+    "assets/offlinegestures/sad/sad1.png",
+    "assets/offlinegestures/sad/sad2.png",
+    "assets/offlinegestures/sad/sad3.png"
+  ],
+  "happy": [
+    "assets/offlinegestures/happy/happy1.png",
+    "assets/offlinegestures/happy/happy2.png"
+  ],
+  "worried": [
+    "assets/offlinegestures/worried/worry1.png",
+    "assets/offlinegestures/worried/worry2.png",
+    "assets/offlinegestures/worried/worry3.png"
+  ],
+  "iloveyou": [
+    "assets/offlinegestures/iloveyou/love1.png",
+    "assets/offlinegestures/iloveyou/love2.png",
+    "assets/offlinegestures/iloveyou/love3.png"
+  ],
+  "mother": [
+    "assets/offlinegestures/mother/mother1.png",
+    "assets/offlinegestures/mother/mother2.png",
+    "assets/offlinegestures/mother/mother3.png"
+  ],
+  "father": [
+    "assets/offlinegestures/father/father1.png",
+    "assets/offlinegestures/father/father2.png",
+    "assets/offlinegestures/father/father3.png",
+    "assets/offlinegestures/father/father4.png"
+  ],
+  "uncle": [
+    "assets/offlinegestures/uncle/uncle1.png",
+    "assets/offlinegestures/uncle/uncle2.png",
+    "assets/offlinegestures/uncle/uncle3.png",
+    "assets/offlinegestures/uncle/uncle4.png"
+  ],
+  "aunt": [
+    "assets/offlinegestures/aunt/aunt1.png",
+    "assets/offlinegestures/aunt/aunt2.png",
+    "assets/offlinegestures/aunt/aunt3.png",
+    "assets/offlinegestures/aunt/aunt4.png"
+  ],
+  "baby": [
+    "assets/offlinegestures/baby/baby1.png",
+    "assets/offlinegestures/baby/baby2.png",
+    "assets/offlinegestures/baby/baby3.png",
+    "assets/offlinegestures/baby/baby4.png"
+  ],
+  "boy": [
+    "assets/offlinegestures/boy/boy1.png",
+    "assets/offlinegestures/boy/boy2.png",
+    "assets/offlinegestures/boy/boy3.png",
+    "assets/offlinegestures/boy/boy4.png",
+    "assets/offlinegestures/boy/boy5.png"
+  ],
+  "girl": [
+    "assets/offlinegestures/girl/girl1.png",
+    "assets/offlinegestures/girl/girl2.png"
+  ],
+  "family": [
+    "assets/offlinegestures/family/family1.png",
+    "assets/offlinegestures/family/family2.png",
+    "assets/offlinegestures/family/family3.png",
+    "assets/offlinegestures/family/family4.png"
+  ],
+   "home": [
+    "assets/offlinegestures/home/home1.png",
+    "assets/offlinegestures/home/home2.png"
+  ],
+  "thief": [
+    "assets/offlinegestures/thief/thief1.png",
+    "assets/offlinegestures/thief/thief2.png"
+  ],
+  "doctor": [
+    "assets/offlinegestures/doctor/doctor1.png",
+    "assets/offlinegestures/doctor/doctor2.png"
+  ],
+  "school": [
+    "assets/offlinegestures/school/school1.png"
+  ],
+  "restaurant": [
+    "assets/offlinegestures/restaurant/restaurant1.png",
+    "assets/offlinegestures/restaurant/restaurant2.png"
+  ],
+  "mosque": [
+    "assets/offlinegestures/mosque/mosque1.png"
+  ],
+  "church": [
+    "assets/offlinegestures/church/church1.png",
+    "assets/offlinegestures/church/church2.png"
+  ],
+  "sleep": [
+    "assets/offlinegestures/sleep/sleep1.png",
+    "assets/offlinegestures/sleep/sleep2.png",
+    "assets/offlinegestures/sleep/sleep3.png",
+    "assets/offlinegestures/sleep/sleep4.png"
+  ],
+  "lost": [
+    "assets/offlinegestures/lost/lost1.png",
+    "assets/offlinegestures/lost/lost2.png"
+  ],
+  "cold": [
+    "assets/offlinegestures/cold/cold1.png",
+    "assets/offlinegestures/cold/cold2.png",
+    "assets/offlinegestures/cold/cold3.png",
+    "assets/offlinegestures/cold/cold4.png"
+  ],
+  "angry": [
+    "assets/offlinegestures/angry/angry1.png",
+    "assets/offlinegestures/angry/angry2.png",
+    "assets/offlinegestures/angry/angry3.png",
+    "assets/offlinegestures/angry/angry4.png"
+  ],
+  "quiet": [
+    "assets/offlinegestures/quiet/quiet1.png",
+    "assets/offlinegestures/quiet/quiet2.png"
+  ],
+  "you'rwelcome": [
+    "assets/offlinegestures/you'rwelcome/welcome1.png",
+    "assets/offlinegestures/you'rwelcome/welcome2.png"
+  ],
+  "want": [
+    "assets/offlinegestures/want/want1.png",
+    "assets/offlinegestures/want/want2.png"
+  ],
+  "promise": [
+    "assets/offlinegestures/promise/promise1.png",
+    "assets/offlinegestures/promise/promise2.png",
+    "assets/offlinegestures/promise/promise3.png"
+  ],
+  "woww": [
+    "assets/offlinegestures/woww/woww1.png",
+    "assets/offlinegestures/woww/woww2.png",
+    "assets/offlinegestures/woww/woww3.png",
+    "assets/offlinegestures/woww/woww4.png"
+  ],
+  "you": [
+    "assets/offlinegestures/you/you1.png",
+    "assets/offlinegestures/you/you2.png"
+  ],
+  "good": [
+    "assets/offlinegestures/good/good1.png",
+    "assets/offlinegestures/good/good2.png",
+    "assets/offlinegestures/good/good3.png"
+  ]
+}
