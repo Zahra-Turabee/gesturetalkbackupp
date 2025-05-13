@@ -1,111 +1,205 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:flutter/services.dart';
 
-class OfflineSelect extends StatefulWidget {
+class OfflineSelectScreen extends StatefulWidget {
   @override
-  _OfflineSelectState createState() => _OfflineSelectState();
+  _OfflineSelectScreenState createState() => _OfflineSelectScreenState();
 }
 
-class _OfflineSelectState extends State<OfflineSelect> {
-  final List<String> helloImages = [
-    'assets/hello/hello1.png',
-    'assets/hello/hello2.jpg',
-    'assets/hello/hello3.png',
-    'assets/hello/hello4.jpg',
-  ];
-
-  // Hive Box for selected images
-  late Box<String> selectedImagesBox;
+class _OfflineSelectScreenState extends State<OfflineSelectScreen> {
+  Box? _offlineImagesBox;
+  String _searchQuery = ''; // ✅ Search query state
 
   @override
   void initState() {
     super.initState();
-    _openBox(); // Open the Hive box on screen load
+    _initHiveBox();
   }
 
-  // Open the box where selected image paths will be saved
-  void _openBox() async {
-    selectedImagesBox = await Hive.openBox<String>('selectedImages');
+  Future<void> _initHiveBox() async {
+    _offlineImagesBox = await Hive.openBox('offlineImages');
+    setState(() {});
   }
 
-  // Save selected image (only if not already saved)
-  void _saveImageToHive(String imagePath) async {
-    if (!selectedImagesBox.values.contains(imagePath)) {
-      selectedImagesBox.add(imagePath); // Only add if not already present
+  Future<Map<String, List<String>>> loadGesturesFromJson() async {
+    final String jsonString = await rootBundle.loadString(
+      'assets/gestures.json',
+    );
+    final Map<String, dynamic> jsonMap = json.decode(jsonString);
+    return jsonMap.map((key, value) {
+      List<String> imagePaths = List<String>.from(value);
+      return MapEntry(key, imagePaths);
+    });
+  }
+
+  Future<void> saveImageToHive(String imagePath, String groupName) async {
+    if (_offlineImagesBox != null) {
+      bool alreadyExists = _offlineImagesBox!.values.any(
+        (element) =>
+            element['image'] == imagePath && element['group'] == groupName,
+      );
+
+      if (!alreadyExists) {
+        await _offlineImagesBox!.add({'image': imagePath, 'group': groupName});
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Added to Offline Mode")));
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Already added")));
+      }
     }
   }
 
-  // Show the confirmation dialog for saving the image
-  void _showConfirmationPopup(String imagePath, String groupName) {
+  void _showImageDialog(String imagePath, String groupName) {
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: Text('Use this gesture?'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(imagePath, height: 180),
-                Text(' $groupName', style: TextStyle(fontSize: 27)),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.clear, color: Colors.red),
-                onPressed: () => Navigator.of(context).pop(),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(imagePath),
+              SizedBox(height: 8),
+              Text(
+                "You want to add this in offline screen?",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-              IconButton(
-                icon: Icon(Icons.check, color: Colors.green),
-                onPressed: () {
-                  _saveImageToHive(imagePath); // Save image only
-                  Navigator.of(context).pop(); // Close dialog
-                },
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.red),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.check, color: Colors.green),
+                    onPressed: () {
+                      saveImageToHive(imagePath, groupName);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_offlineImagesBox == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Offline Gesture Selection')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Offline Select Screen')),
-      body: Padding(
-        padding: const EdgeInsets.all(4.11),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Hello',
-              style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        title: Text('Offline Gesture Selection'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search by heading (e.g., Angry)',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.trim().toLowerCase();
+                });
+              },
             ),
-            SizedBox(height: 1),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children:
-                    helloImages.map((imagePath) {
-                      return GestureDetector(
-                        onTap: () => _showConfirmationPopup(imagePath, 'Hello'),
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          width: 84,
-                          height: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                              image: AssetImage(imagePath),
-                              fit: BoxFit.cover,
-                            ),
+          ),
+        ),
+      ),
+      body: FutureBuilder<Map<String, List<String>>>(
+        future: loadGesturesFromJson(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error loading gestures'));
+          }
+
+          final gestureGroups = snapshot.data ?? {};
+
+          // ✅ Filter groups based on search
+          final filteredEntries = gestureGroups.entries.where((entry) {
+            return entry.key.toLowerCase().contains(_searchQuery);
+          });
+
+          if (filteredEntries.isEmpty) {
+            return Center(child: Text("No matching headings found."));
+          }
+
+          return ListView(
+            children:
+                filteredEntries.map((entry) {
+                  final groupName = entry.key;
+                  final imagePaths = entry.value;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(18.50),
+                        child: Text(
+                          groupName.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
-                    }).toList(),
-              ),
-            ),
-          ],
-        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children:
+                              imagePaths.map((imagePath) {
+                                return GestureDetector(
+                                  onTap:
+                                      () => _showImageDialog(
+                                        imagePath,
+                                        groupName,
+                                      ),
+                                  child: Image.asset(
+                                    imagePath,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  );
+                }).toList(),
+          );
+        },
       ),
     );
   }

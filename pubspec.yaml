@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^2.0.15
   supabase_flutter: ^2.8.4
   gradient_borders: ^1.0.0
+  reorderable_grid_view: ^2.2.8
 
   # 🔽 Sir wali extra dependencies (newly added)
   bottom_picker: 
@@ -57,7 +58,8 @@ dependencies:
   get_storage: ^2.1.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  # audioplayers: ^6.4.0
+  audioplayers: ^6.4.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +70,61 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/hello/
-    # - assets/offline_voices/
+    - assets/offline_voices/
+    - assets/gestures.json
+    - assets/offlinegestures/hello/
+    - assets/offlinegestures/goodmorning/
+    - assets/offlinegestures/help/
+    - assets/offlinegestures/fire/
+    - assets/offlinegestures/police/
+    - assets/offlinegestures/hospital/
+    - assets/offlinegestures/no/
+    - assets/offlinegestures/yes/
+    - assets/offlinegestures/toilet/
+    - assets/offlinegestures/hungry/
+    - assets/offlinegestures/water/
+    - assets/offlinegestures/sick/
+    - assets/offlinegestures/pain/
+    - assets/offlinegestures/stop/
+    - assets/offlinegestures/thankyou/
+    - assets/offlinegestures/sorry/
+    - assets/offlinegestures/donttouch/
+    - assets/offlinegestures/goodbye/
+    - assets/offlinegestures/please/
+    - assets/offlinegestures/what/
+    - assets/offlinegestures/where/
+    - assets/offlinegestures/why/
+    - assets/offlinegestures/how/
+    - assets/offlinegestures/scared/
+    - assets/offlinegestures/sad/
+    - assets/offlinegestures/happy/
+    - assets/offlinegestures/worried/
+    - assets/offlinegestures/iloveyou/
+    - assets/offlinegestures/mother/
+    - assets/offlinegestures/father/
+    - assets/offlinegestures/uncle/
+    - assets/offlinegestures/aunt/
+    - assets/offlinegestures/baby/
+    - assets/offlinegestures/boy/
+    - assets/offlinegestures/girl/
+    - assets/offlinegestures/family/
+    - assets/offlinegestures/home/
+    - assets/offlinegestures/thief/
+    - assets/offlinegestures/doctor/
+    - assets/offlinegestures/school/
+    - assets/offlinegestures/restaurant/
+    - assets/offlinegestures/mosque/
+    - assets/offlinegestures/church/
+    - assets/offlinegestures/sleep/
+    - assets/offlinegestures/lost/
+    - assets/offlinegestures/cold/
+    - assets/offlinegestures/angry/
+    - assets/offlinegestures/quiet/
+    - assets/offlinegestures/you'rwelcome/
+    - assets/offlinegestures/want/
+    - assets/offlinegestures/promise/
+    - assets/offlinegestures/woww/
+    - assets/offlinegestures/you/
+    - assets/offlinegestures/good/
 
     # - assets/fonts/
