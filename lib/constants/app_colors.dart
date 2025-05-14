@@ -34,7 +34,7 @@ class AppThemeColors {
 }
 
 // ✅ Main Colors
-const kPrimaryColor = Color(0xFF8E26A0); // Purple
+const kPrimaryColor = Color.fromRGBO(142, 38, 160, 1); // Purple
 const kPrimaryColorLight = Color(0xFFB0B0B0); // Grey
 const kPrimaryColorWhite = Color(0xFFFFFFFF); // White
 const kPrimaryColorDark = Color(0xFF6A1B83); // Darker Purple

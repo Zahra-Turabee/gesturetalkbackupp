@@ -21,7 +21,7 @@ class DashboardScreen extends StatelessWidget {
     {
       'title': 'Offline Mode',
       'icon': Icons.signal_wifi_off,
-      'screen': const OfflineModeScreen(),
+      'screen': OfflineModeScreen(),
     },
     {
       'title': 'Entertainment',

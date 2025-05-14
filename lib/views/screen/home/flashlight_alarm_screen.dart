@@ -291,7 +291,8 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pickTime(context),
         backgroundColor: theme.colorScheme.primary,
-        foregroundColor: isDark ? kPrimaryColor : Colors.white,
+        foregroundColor:
+            isDark ? const Color.fromRGBO(142, 38, 160, 1) : Colors.white,
         child: const Icon(Icons.add),
       ),
     );

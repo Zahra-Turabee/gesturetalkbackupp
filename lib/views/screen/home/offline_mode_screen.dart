@@ -1,5 +1,6 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'offline_select.dart';
 
 class OfflineModeScreen extends StatefulWidget {
@@ -8,99 +9,191 @@ class OfflineModeScreen extends StatefulWidget {
 }
 
 class _OfflineModeScreenState extends State<OfflineModeScreen> {
-  List<String> selectedImages = [];
-  bool isEditMode = false;
+  List<Map<String, dynamic>> images = [];
+  bool deleteMode = false;
+  AudioPlayer? _audioPlayer;
 
   @override
   void initState() {
     super.initState();
-    _loadSelectedImages();
+    _audioPlayer = AudioPlayer(); // ✅ Create only once
+    loadImages();
   }
 
-  void _loadSelectedImages() async {
-    final box = await Hive.openBox<String>('selectedImages');
-    final allValues = box.values.toList();
-
-    // Filter out non-image entries (e.g. 'groupName' or invalid strings)
-    final validImages =
-        allValues
-            .where(
-              (path) =>
-                  path.endsWith('.png') ||
-                  path.endsWith('.jpg') ||
-                  path.endsWith('.jpeg'),
-            )
-            .toList();
-
+  Future<void> loadImages() async {
+    final box = await Hive.openBox('offlineImages');
     setState(() {
-      selectedImages = validImages;
+      images =
+          box.values
+              .cast<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
     });
   }
 
-  void _deleteImage(int index) async {
-    final box = await Hive.openBox<String>('selectedImages');
-    // Find actual key of the image to delete from values
-    final key = box.keys.elementAt(index);
-    await box.delete(key);
-    _loadSelectedImages();
+  void playVoice(String groupName) async {
+    try {
+      await _audioPlayer?.stop();
+      String audioPath = 'offline_voices/${groupName.toLowerCase()}.mp3';
+      await _audioPlayer?.setReleaseMode(ReleaseMode.loop);
+      await _audioPlayer?.play(AssetSource(audioPath));
+      print('Playing: $audioPath');
+    } catch (e) {
+      print('Error playing voice: $e');
+    }
+  }
+
+  void stopVoice() {
+    _audioPlayer?.stop();
+  }
+
+  Future<void> deleteImage(int index) async {
+    final box = await Hive.openBox('offlineImages');
+    await box.deleteAt(index);
+    await loadImages();
+  }
+
+  void showPopup(String imagePath, String groupName) async {
+    playVoice(groupName);
+
+    await showDialog(
+      context: context,
+      barrierDismissible: true, // ✅ Tap outside to dismiss
+      builder:
+          (_) => WillPopScope(
+            onWillPop: () async {
+              stopVoice(); // ✅ Stop on back button
+              return true;
+            },
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {}, // Block tap-through
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            stopVoice(); // ✅ Stop on cross
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      Image.asset(imagePath, height: 180),
+                      SizedBox(height: 12),
+                      Text(
+                        groupName.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
+
+    stopVoice(); // ✅ Stop if dismissed by outside tap
+  }
+
+  Future<bool> onWillPop() async {
+    if (deleteMode) {
+      setState(() => deleteMode = false);
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  void dispose() {
+    stopVoice();
+    _audioPlayer?.dispose(); // ✅ Dispose to free resources
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Offline Mode00'),
-        actions: [
-          IconButton(
-            icon: Icon(isEditMode ? Icons.close : Icons.edit),
-            onPressed: () {
-              setState(() {
-                isEditMode = !isEditMode;
-              });
-            },
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Offline Mode'),
+          actions: [
+            IconButton(
+              icon: Icon(deleteMode ? Icons.cancel : Icons.edit),
+              onPressed: () => setState(() => deleteMode = !deleteMode),
+            ),
+          ],
+        ),
+        body: GridView.builder(
+          padding: EdgeInsets.all(12),
+          itemCount: images.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
           ),
-        ],
-      ),
-      body:
-          selectedImages.isEmpty
-              ? Center(child: Text('No image selected'))
-              : GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemCount: selectedImages.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Stack(
-                      children: [
-                        Image.asset(selectedImages[index]),
-                        if (isEditMode)
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteImage(index),
-                            ),
-                          ),
-                      ],
+          itemBuilder: (_, index) {
+            final imagePath = images[index]['image'];
+            final groupName = images[index]['group'];
+
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: () => showPopup(imagePath, groupName),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
-                  );
-                },
-              ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => OfflineSelect()),
-          );
-          _loadSelectedImages();
-        },
-        child: Icon(Icons.add),
-        backgroundColor: const Color.fromARGB(142, 160, 1, 115),
+                  ),
+                ),
+                if (deleteMode)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => deleteImage(index),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.red,
+                        radius: 14,
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OfflineSelectScreen()),
+            );
+            await loadImages(); // Refresh list after return
+          },
+          child: Icon(Icons.add),
+          backgroundColor: const Color.fromARGB(142, 134, 49, 118),
+        ),
       ),
     );
   }
