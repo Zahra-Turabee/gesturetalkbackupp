@@ -14,9 +14,10 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
-        <!-- 🔧 Required for flashlight alarm to work in background -->
+        <!-- 🔧 Background service for flashlight alarm -->
         <service
-            android:name="com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin"
+            android:name=".FlashlightAlarmService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
         <activity
@@ -39,8 +40,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Don't delete the meta-data below.
-        This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!-- Required for Flutter plugins -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
@@ -53,4 +53,5 @@
             <data android:mimeType="text/plain" />
         </intent>
     </queries>
+
 </manifest>
