@@ -1,205 +1,228 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:hive/hive.dart';
-import 'package:flutter/services.dart';
 
 class OfflineSelectScreen extends StatefulWidget {
   @override
   _OfflineSelectScreenState createState() => _OfflineSelectScreenState();
 }
 
-class _OfflineSelectScreenState extends State<OfflineSelectScreen> {
-  Box? _offlineImagesBox;
-  String _searchQuery = ''; // ✅ Search query state
+class _OfflineSelectScreenState extends State<OfflineSelectScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Map<String, Map<String, List<String>>> _filteredData = {
+    'PSL': {},
+    'BSL': {},
+    'ASL': {},
+  };
+  bool _isLoading = true;
+
+  final List<String> languages = ['PSL', 'BSL', 'ASL'];
+  final List<String> flags = [
+    'assets/flags/pakistan.png', // PSL
+    'assets/flags/uk.png', // BSL
+    'assets/flags/usa.png', // ASL
+  ];
 
   @override
   void initState() {
     super.initState();
-    _initHiveBox();
+    _tabController = TabController(length: languages.length, vsync: this);
+    loadGestureData();
   }
 
-  Future<void> _initHiveBox() async {
-    _offlineImagesBox = await Hive.openBox('offlineImages');
-    setState(() {});
-  }
+  Future<void> loadGestureData() async {
+    String jsonString = await rootBundle.loadString('assets/gestures.json');
+    Map<String, dynamic> jsonData = json.decode(jsonString);
 
-  Future<Map<String, List<String>>> loadGesturesFromJson() async {
-    final String jsonString = await rootBundle.loadString(
-      'assets/gestures.json',
-    );
-    final Map<String, dynamic> jsonMap = json.decode(jsonString);
-    return jsonMap.map((key, value) {
-      List<String> imagePaths = List<String>.from(value);
-      return MapEntry(key, imagePaths);
+    for (var group in jsonData.entries) {
+      String groupName = group.key;
+      List<String> images = List<String>.from(group.value);
+
+      for (String imagePath in images) {
+        if (imagePath.contains('psl_')) {
+          _filteredData['PSL']!.putIfAbsent(groupName, () => []).add(imagePath);
+        }
+        if (imagePath.contains('bsl_')) {
+          _filteredData['BSL']!.putIfAbsent(groupName, () => []).add(imagePath);
+        }
+        if (imagePath.contains('asl_')) {
+          _filteredData['ASL']!.putIfAbsent(groupName, () => []).add(imagePath);
+        }
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
     });
   }
 
-  Future<void> saveImageToHive(String imagePath, String groupName) async {
-    if (_offlineImagesBox != null) {
-      bool alreadyExists = _offlineImagesBox!.values.any(
-        (element) =>
-            element['image'] == imagePath && element['group'] == groupName,
-      );
+  Future<void> showAddDialog(String imagePath, String groupName) async {
+    await showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            contentPadding: EdgeInsets.all(15),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "You want to add this gesture to offline?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                SizedBox(height: 12),
+                Image.asset(imagePath, width: 150),
+                SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 32,
+                      ),
+                      onPressed: () async {
+                        final box = await Hive.openBox('offlineImages');
+                        bool alreadyExists = box.values.any(
+                          (element) =>
+                              element['image'] == imagePath &&
+                              element['group'] == groupName,
+                        );
+                        if (alreadyExists) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("This gesture is already added."),
+                            ),
+                          );
+                          return;
+                        }
 
-      if (!alreadyExists) {
-        await _offlineImagesBox!.add({'image': imagePath, 'group': groupName});
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Added to Offline Mode")));
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Already added")));
-      }
-    }
+                        await box.add({'image': imagePath, 'group': groupName});
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Gesture added to offline.")),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      icon: Icon(Icons.cancel, color: Colors.red, size: 32),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+    );
   }
 
-  void _showImageDialog(String imagePath, String groupName) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+  Widget buildTabContent(String langCode) {
+    Map<String, List<String>> data = _filteredData[langCode]!;
+
+    String heading = '';
+    String flagPath = '';
+
+    if (langCode == 'PSL') {
+      heading = 'Pakistan Sign Language';
+      flagPath = 'assets/flags/pakistan.png';
+    } else if (langCode == 'BSL') {
+      heading = 'British Sign Language';
+      flagPath = 'assets/flags/uk.png';
+    } else if (langCode == 'ASL') {
+      heading = 'American Sign Language';
+      flagPath = 'assets/flags/usa.png';
+    }
+
+    return ListView(
+      padding: EdgeInsets.all(12),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(flagPath, width: 28, height: 28),
+            SizedBox(width: 8),
+            Text(
+              heading,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
+        ...data.entries.map((entry) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(imagePath),
-              SizedBox(height: 8),
               Text(
-                "You want to add this in offline screen?",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                entry.key.toUpperCase(),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.close, color: Colors.red),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.check, color: Colors.green),
-                    onPressed: () {
-                      saveImageToHive(imagePath, groupName);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children:
+                    entry.value.map((imgPath) {
+                      return GestureDetector(
+                        onTap: () {
+                          showAddDialog(imgPath, entry.key);
+                        },
+                        child: Image.asset(imgPath, height: 120),
+                      );
+                    }).toList(),
               ),
+              SizedBox(height: 24),
             ],
-          ),
-        );
-      },
+          );
+        }).toList(),
+      ],
     );
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (_offlineImagesBox == null) {
+    if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Offline Gesture Selection')),
+        appBar: AppBar(title: Text("Offline Select")),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Offline Gesture Selection'),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search by heading (e.g., Angry)',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.trim().toLowerCase();
-                });
-              },
-            ),
-          ),
+        title: Text("Offline Select"),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: List.generate(languages.length, (index) {
+            return Tab(
+              icon: Image.asset(flags[index], width: 24),
+              text: languages[index],
+            );
+          }),
         ),
       ),
-      body: FutureBuilder<Map<String, List<String>>>(
-        future: loadGesturesFromJson(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error loading gestures'));
-          }
-
-          final gestureGroups = snapshot.data ?? {};
-
-          // ✅ Filter groups based on search
-          final filteredEntries = gestureGroups.entries.where((entry) {
-            return entry.key.toLowerCase().contains(_searchQuery);
-          });
-
-          if (filteredEntries.isEmpty) {
-            return Center(child: Text("No matching headings found."));
-          }
-
-          return ListView(
-            children:
-                filteredEntries.map((entry) {
-                  final groupName = entry.key;
-                  final imagePaths = entry.value;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(18.50),
-                        child: Text(
-                          groupName.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children:
-                              imagePaths.map((imagePath) {
-                                return GestureDetector(
-                                  onTap:
-                                      () => _showImageDialog(
-                                        imagePath,
-                                        groupName,
-                                      ),
-                                  child: Image.asset(
-                                    imagePath,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                    ],
-                  );
-                }).toList(),
-          );
-        },
+      body: TabBarView(
+        controller: _tabController,
+        children: List.generate(
+          languages.length,
+          (index) => buildTabContent(languages[index]),
+        ),
       ),
     );
   }

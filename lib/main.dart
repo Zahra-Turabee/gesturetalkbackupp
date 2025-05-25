@@ -22,10 +22,8 @@ void main() async {
 
   // Initialize GetStorage
   await GetStorage.init();
-
   // Initialize ThemeController globally
   Get.put(ThemeController()); // This initializes the ThemeController globally
-  print("🌟 This is brand new build 🌟");
   runApp(const MyApp());
 }
 
