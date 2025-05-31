@@ -21,6 +21,8 @@ dependencies:
   supabase_flutter: ^2.8.4
   gradient_borders: ^1.0.0
   reorderable_grid_view: ^2.2.8
+  url_launcher: ^6.3.1
+  flutter_contacts: ^1.1.7+1
 
   # 🔽 Sir wali extra dependencies (newly added)
   bottom_picker: 
@@ -59,6 +61,8 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   audioplayers: ^6.4.0
+  lucide_icons: ^0.257.0
+  
   
 
 dev_dependencies:
@@ -128,8 +132,5 @@ flutter:
     - assets/offlinegestures/good/
     - assets/offlinegestures/when/
     - assets/flags/
-    - assets/flags/pakistan.png
-    - assets/flags/uk.png
+  
 
-
-    # - assets/fonts/

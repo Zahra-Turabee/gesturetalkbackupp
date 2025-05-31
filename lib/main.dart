@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
+import 'package:gesturetalk1/views/screen/home/sos_system_screen.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:gesturetalk1/views/screen/launch/splashscreen.dart';
+import 'package:gesturetalk1/views/screen/home/sos_system_screen.dart';
+import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
 import 'package:gesturetalk1/config/theme/light_theme.dart';
 import 'package:gesturetalk1/config/theme/dark_theme.dart';
 import 'package:gesturetalk1/controller/theme_controller.dart'; // Import ThemeController
