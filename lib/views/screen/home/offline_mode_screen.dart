@@ -12,16 +12,21 @@ class _OfflineModeScreenState extends State<OfflineModeScreen> {
   List<Map<String, dynamic>> images = [];
   bool deleteMode = false;
   AudioPlayer? _audioPlayer;
+  late Box box; // <-- Box variable to open once
 
   @override
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer(); // ✅ Create only once
+    openBoxAndLoadImages(); // Open box once & load images
+  }
+
+  Future<void> openBoxAndLoadImages() async {
+    box = await Hive.openBox('offlineImages'); // Open once
     loadImages();
   }
 
   Future<void> loadImages() async {
-    final box = await Hive.openBox('offlineImages');
     setState(() {
       images =
           box.values
@@ -48,8 +53,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen> {
   }
 
   Future<void> deleteImage(int index) async {
-    final box = await Hive.openBox('offlineImages');
-    await box.deleteAt(index);
+    await box.deleteAt(index); // Use already opened box
     await loadImages();
   }
 
@@ -192,7 +196,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen> {
             await loadImages(); // Refresh list after return
           },
           child: Icon(Icons.add),
-          backgroundColor: const Color.fromARGB(142, 134, 49, 118),
+          backgroundColor: const Color.fromARGB(142, 160, 1, 157),
         ),
       ),
     );

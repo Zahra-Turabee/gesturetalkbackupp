@@ -128,3 +128,7 @@ flutter:
     - assets/offlinegestures/woww/
     - assets/offlinegestures/you/
     - assets/offlinegestures/good/
+    - assets/offlinegestures/when/
+    - assets/flags/
+    - assets/flags/pakistan.png
+    - assets/flags/uk.png
