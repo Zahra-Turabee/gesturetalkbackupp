@@ -10,6 +10,7 @@ import 'package:gesturetalk1/views/screen/home/offline_mode_screen.dart';
 import 'package:gesturetalk1/views/screen/home/offline_select.dart';
 import 'package:gesturetalk1/views/screen/home/profilescreen.dart';
 import 'package:gesturetalk1/views/screen/home/sos_system_screen.dart';
+import 'package:gesturetalk1/views/screen/home/settings_sos_screen.dart';
 import 'package:gesturetalk1/views/screen/home/talk_screen.dart';
 import 'package:gesturetalk1/views/screen/home/videoplayer_screen.dart';
 import 'package:gesturetalk1/views/screen/launch/splashscreen.dart';
@@ -31,7 +32,7 @@ class AppPages {
       name: AppRoutes.entertainment,
       page: () => const EntertainmentScreen(),
     ),
-    GetPage(name: AppRoutes.sosSystem, page: () => const SOSSystemScreen()),
+    GetPage(name: AppRoutes.sosSystem, page: () => const SosScreen()),
     GetPage(
       name: AppRoutes.flashlightAlarm,
       page: () => const FlashlightAlarmScreen(),

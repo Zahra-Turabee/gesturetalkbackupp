@@ -31,7 +31,7 @@ class DashboardScreen extends StatelessWidget {
     {
       'title': 'SOS System',
       'icon': Icons.emergency_share,
-      'screen': const SOSSystemScreen(),
+      'screen': SosScreen(),
     },
     {
       'title': 'Flashlight Alarm',

@@ -34,12 +34,12 @@
   "no": [
     "assets/offlinegestures/no/psl_no.png",
     "assets/offlinegestures/no/bsl_no.png",
-    "assets/offlinegestures/no/asl_no.jpg"
+    "assets/offlinegestures/no/asl_no.png"
   ],
   "yes": [
     "assets/offlinegestures/yes/psl_yes.png",
     "assets/offlinegestures/yes/bsl_yes.png",
-    "assets/offlinegestures/yes/asl_yes.jpg"
+    "assets/offlinegestures/yes/asl_yes.png"
   ],
   "toilet": [
     "assets/offlinegestures/toilet/psl_toilet.png",
