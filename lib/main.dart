@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gesturetalk1/views/screen/home/sos_system_screen.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart'; // Import Hive
 
 // Import your theme files
-import 'package:gesturetalk1/views/screen/home/sos_system_screen.dart';
+
 import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
 import 'package:gesturetalk1/config/theme/light_theme.dart';
 import 'package:gesturetalk1/config/theme/dark_theme.dart';
@@ -54,7 +53,7 @@ class MyApp extends StatelessWidget {
       themeMode: _themeController.theme, // This controls the global theme
       defaultTransition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 500),
-      initialRoute: AppRoutes.dashboard, // Define initial route here
+      initialRoute: AppRoutes.splash, // Define initial route here
       getPages: AppPages.pages, // Use the routes from AppPages
     );
   }

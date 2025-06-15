@@ -13,4 +13,5 @@ class AppRoutes {
   static const gestureLoad = '/gesture-load';
   static const videoPlayer = '/video-player';
   static const profile = '/profile';
+  static const settingsSos = '/settings-sos';
 }

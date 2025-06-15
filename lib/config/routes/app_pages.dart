@@ -39,6 +39,11 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.offlineSelect, page: () => OfflineSelectScreen()),
     GetPage(name: AppRoutes.gestureLoad, page: () => GestureLoadScreen()),
+    GetPage(
+      name: AppRoutes.settingsSos,
+      page: () => const Settings_Sos_Screen(),
+    ),
+
     // Add parameters for the video player screen
     GetPage(
       name: AppRoutes.videoPlayer,
