@@ -1,0 +1,293 @@
+{
+  "hello": [
+    "assets/offlinegestures/hello/psl_hello.png",
+    "assets/offlinegestures/hello/bsl_hello.png",
+    "assets/offlinegestures/hello/asl_hello.png"
+    
+
+  ],
+  "good morning": [
+    "assets/offlinegestures/goodmorning/psl_goodmorning.png",
+    "assets/offlinegestures/goodmorning/bsl_goodmorning.png",
+    "assets/offlinegestures/goodmorning/asl_goodmorning.png"
+  ],
+  "help": [
+    "assets/offlinegestures/help/psl_help.png",
+    "assets/offlinegestures/help/bsl_help.png",
+    "assets/offlinegestures/help/asl_help.png"
+  ],
+  "fire": [
+    "assets/offlinegestures/fire/psl_fire.png",
+    "assets/offlinegestures/fire/bsl_fire.png",
+    "assets/offlinegestures/fire/asl_fire.png"
+  ],
+  "police": [
+    "assets/offlinegestures/police/psl_police.png",
+    "assets/offlinegestures/police/bsl_police.png",
+    "assets/offlinegestures/police/asl_police.png"
+  ],
+  "hospital": [
+    "assets/offlinegestures/hospital/psl_hospital.png",
+    "assets/offlinegestures/hospital/bsl_hospital.png",
+    "assets/offlinegestures/hospital/asl_hospital.png"
+  ],
+  "no": [
+    "assets/offlinegestures/no/psl_no.png",
+    "assets/offlinegestures/no/bsl_no.png",
+    "assets/offlinegestures/no/asl_no.png"
+  ],
+  "yes": [
+    "assets/offlinegestures/yes/psl_yes.png",
+    "assets/offlinegestures/yes/bsl_yes.png",
+    "assets/offlinegestures/yes/asl_yes.png"
+  ],
+  "toilet": [
+    "assets/offlinegestures/toilet/psl_toilet.png",
+    "assets/offlinegestures/toilet/bsl_toilet.png",
+    "assets/offlinegestures/toilet/asl_toilet.png"
+  ],
+  "hungry": [
+    "assets/offlinegestures/hungry/psl_hungry.png",
+    "assets/offlinegestures/hungry/bsl_hungry.png",
+    "assets/offlinegestures/hungry/asl_hungry.png"
+  ],
+  "water": [
+    "assets/offlinegestures/water/psl_water.png",
+    "assets/offlinegestures/water/bsl_water.png",
+    "assets/offlinegestures/water/asl_water.png"
+  ],
+  "sick": [
+    "assets/offlinegestures/sick/psl_sick.png",
+    "assets/offlinegestures/sick/bsl_sick.png",
+    "assets/offlinegestures/sick/asl_sick.png"
+  ],
+  "pain": [
+    "assets/offlinegestures/pain/psl_pain.png",
+    "assets/offlinegestures/pain/bsl_pain.png",
+    "assets/offlinegestures/pain/asl_pain.png"
+  ],
+  "stop": [
+    "assets/offlinegestures/stop/psl_stop.png",
+    "assets/offlinegestures/stop/bsl_stop.png",
+    "assets/offlinegestures/stop/asl_stop.png"
+  ],
+  "thank you": [
+    "assets/offlinegestures/thankyou/psl_thankyou.png",
+    "assets/offlinegestures/thankyou/bsl_thankyou.png",
+    "assets/offlinegestures/thankyou/asl_thankyou.png"
+  ],
+  "sorry": [
+    "assets/offlinegestures/sorry/psl_sorry.png",
+    "assets/offlinegestures/sorry/bsl_sorry.png",
+    "assets/offlinegestures/sorry/asl_sorry.png"
+  ],
+  "dont touch": [
+    "assets/offlinegestures/donttouch/psl_donttouch.png",
+    "assets/offlinegestures/donttouch/bsl_donttouch.png",
+    "assets/offlinegestures/donttouch/asl_donttouch.png"
+  ],
+  "good bye": [
+    "assets/offlinegestures/goodbye/psl_bye.png",
+    "assets/offlinegestures/goodbye/bsl_bye.png",
+    "assets/offlinegestures/goodbye/asl_bye.png"
+  ],
+  "please": [
+    "assets/offlinegestures/please/psl_please.png",
+    "assets/offlinegestures/please/bsl_please.png",
+    "assets/offlinegestures/please/asl_please.png"
+  ],
+  "what": [
+    "assets/offlinegestures/what/psl_what.png",
+    "assets/offlinegestures/what/bsl_what.png",
+    "assets/offlinegestures/what/asl_what.png"
+  ],
+   "when": [
+    "assets/offlinegestures/when/psl_when.png",
+    "assets/offlinegestures/when/bsl_when.png",
+    "assets/offlinegestures/when/asl_when.png"
+  ],
+
+  "where": [
+    "assets/offlinegestures/where/psl_where.png",
+    "assets/offlinegestures/where/bsl_where.png",
+    "assets/offlinegestures/where/asl_where.png"
+  ],
+  "why": [
+    "assets/offlinegestures/why/psl_why.png",
+    "assets/offlinegestures/why/bsl_why.png",
+    "assets/offlinegestures/why/asl_why.png"
+  ],
+  "how": [
+    "assets/offlinegestures/how/psl_how.png",
+    "assets/offlinegestures/how/bsl_how.png",
+    "assets/offlinegestures/how/asl_how.png"
+  ],
+  "scared": [
+    "assets/offlinegestures/scared/psl_scared.png",
+    "assets/offlinegestures/scared/bsl_scared.png",
+    "assets/offlinegestures/scared/asl_scared.png"
+  ],
+  "sad": [
+    "assets/offlinegestures/sad/psl_sad.png",
+    "assets/offlinegestures/sad/bsl_sad.png",
+    "assets/offlinegestures/sad/asl_sad.png"
+  ],
+  "happy": [
+    "assets/offlinegestures/happy/psl_happy.png",
+    "assets/offlinegestures/happy/bsl_happy.png",
+    "assets/offlinegestures/happy/asl_happy.png",
+    "assets/offlinegestures/happy/asl_happy2.png"
+
+  ],
+  "worried": [
+    "assets/offlinegestures/worried/psl_worry.png",
+    "assets/offlinegestures/worried/bsl_worry.png",
+    "assets/offlinegestures/worried/asl_worry.png"
+  ],
+  "i love you": [
+    "assets/offlinegestures/iloveyou/psl_love.png",
+    "assets/offlinegestures/iloveyou/bsl_love.png",
+    "assets/offlinegestures/iloveyou/asl_love.png"
+  ],
+  "mother": [
+    "assets/offlinegestures/mother/psl_mother.png",
+    "assets/offlinegestures/mother/bsl_mother.png",
+    "assets/offlinegestures/mother/asl_mother.png"
+  ],
+  "father": [
+    "assets/offlinegestures/father/psl_father.png",
+    "assets/offlinegestures/father/bsl_father.png",
+    "assets/offlinegestures/father/bsl_father2.png",
+    "assets/offlinegestures/father/asl_father.png"
+  ],
+  "uncle": [
+    "assets/offlinegestures/uncle/psl_uncle.png",
+    "assets/offlinegestures/uncle/bsl_uncle.png",
+    "assets/offlinegestures/uncle/asl_uncle.png",
+    "assets/offlinegestures/uncle/asl_uncle2.png"
+  ],
+  "aunt": [
+    "assets/offlinegestures/aunt/psl_aunt.png",
+    "assets/offlinegestures/aunt/bsl_aunt.png",
+    "assets/offlinegestures/aunt/asl_aunt.png",
+    "assets/offlinegestures/aunt/asl_aunt2.png"
+  ],
+  "baby": [
+    "assets/offlinegestures/baby/psl_baby.png",
+    "assets/offlinegestures/baby/bsl_baby.png",
+    "assets/offlinegestures/baby/asl_baby.png",
+    "assets/offlinegestures/baby/asl_baby2.png"
+  ],
+  "boy": [
+    "assets/offlinegestures/boy/psl_boy.png",
+    "assets/offlinegestures/boy/psl_boy2.png",
+    "assets/offlinegestures/boy/bsl_boy.png",
+    "assets/offlinegestures/boy/asl_boy.png",
+    "assets/offlinegestures/boy/asl_boy2.png"
+  ],
+  "girl": [
+    "assets/offlinegestures/girl/psl_girl.png",
+    "assets/offlinegestures/girl/bsl_girl.png",
+    "assets/offlinegestures/girl/asl_girl.png"
+  ],
+  "family": [
+    "assets/offlinegestures/family/psl_family.png",
+    "assets/offlinegestures/family/bsl_family.png",
+    "assets/offlinegestures/family/asl_family.png"
+
+  ],
+  "home": [
+    "assets/offlinegestures/home/psl_home.png",
+    "assets/offlinegestures/home/bsl_home.png",
+    "assets/offlinegestures/home/asl_home.png"
+  ],
+  "thief": [
+    "assets/offlinegestures/thief/psl_thief.png",
+    "assets/offlinegestures/thief/bsl_thief.png",
+    "assets/offlinegestures/thief/asl_thief.png"
+  ],
+  "doctor": [
+    "assets/offlinegestures/doctor/psl_doctor.png",
+    "assets/offlinegestures/doctor/bsl_doctor.png",
+    "assets/offlinegestures/doctor/asl_doctor.png"
+  ],
+  "school": [
+    "assets/offlinegestures/school/psl_school.png",
+    "assets/offlinegestures/school/bsl_school.png",
+    "assets/offlinegestures/school/asl_school.png"
+  ],
+  "restaurant": [
+    "assets/offlinegestures/restaurant/psl_restaurant.png",
+    "assets/offlinegestures/restaurant/bsl_restaurant.png",
+    "assets/offlinegestures/restaurant/asl_restaurant.png"
+  ],
+  "mosque": [
+    "assets/offlinegestures/mosque/psl_mosque.png",
+    "assets/offlinegestures/mosque/bsl_mosque.png",
+    "assets/offlinegestures/mosque/asl_mosque.png"
+  ],
+  "church": [
+    "assets/offlinegestures/church/psl_church.png",
+    "assets/offlinegestures/church/bsl_church.png",
+    "assets/offlinegestures/church/asl_church.png"
+  ],
+  "sleep": [
+    "assets/offlinegestures/sleep/psl_sleep.png",
+    "assets/offlinegestures/sleep/bsl_sleep.png",
+    "assets/offlinegestures/sleep/bsl_sleep2.png",
+    "assets/offlinegestures/sleep/asl_sleep.png"
+  ],
+  "lost": [
+    "assets/offlinegestures/lost/psl_lost.png",
+    "assets/offlinegestures/lost/bsl_lost.png",
+    "assets/offlinegestures/lost/asl_lost.png"
+  ],
+  "cold": [
+    "assets/offlinegestures/cold/psl_cold.png",
+    "assets/offlinegestures/cold/bsl_cold.png",
+    "assets/offlinegestures/cold/asl_cold.png"
+  ],
+  "angry": [
+    "assets/offlinegestures/angry/psl_angry.png",
+    "assets/offlinegestures/angry/bsl_angry.png",
+    "assets/offlinegestures/angry/asl_angry.png",
+    "assets/offlinegestures/angry/asl_angry2.png"
+
+  ],
+  "quiet": [
+    "assets/offlinegestures/quiet/psl_quiet.png",
+    "assets/offlinegestures/quiet/bsl_quiet.png",
+    "assets/offlinegestures/quiet/asl_quiet.png"
+  ],
+  "you'r welcome": [
+    "assets/offlinegestures/you'rwelcome/psl_welcome.png",
+    "assets/offlinegestures/you'rwelcome/bsl_welcome.png",
+    "assets/offlinegestures/you'rwelcome/asl_welcome.png"
+  ],
+  "want": [
+    "assets/offlinegestures/want/asl_want.png",
+    "assets/offlinegestures/want/bsl_want.png",
+    "assets/offlinegestures/want/psl_want.png"
+  ],
+  "promise": [
+    "assets/offlinegestures/promise/asl_promise.png",
+    "assets/offlinegestures/promise/bsl_promise.png",
+    "assets/offlinegestures/promise/psl_promise.png"
+  ],
+  "woww": [
+    "assets/offlinegestures/woww/asl_woww.png",
+    "assets/offlinegestures/woww/asl_woww2.png",
+    "assets/offlinegestures/woww/bsl_woww.png",
+    "assets/offlinegestures/woww/psl_woww.png"
+  ],
+  "you": [
+    "assets/offlinegestures/you/asl_you.png",
+    "assets/offlinegestures/you/bsl_you.png",
+    "assets/offlinegestures/you/psl_you.png"
+  ],
+  "good": [
+    "assets/offlinegestures/good/asl_good.png",
+    "assets/offlinegestures/good/bsl_good.png",
+    "assets/offlinegestures/good/psl_good.png"
+  ]
+}

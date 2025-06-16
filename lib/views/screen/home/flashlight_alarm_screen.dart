@@ -8,7 +8,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gesturetalk1/constants/app_colors.dart'; // <-- Make sure this import path is correct
+//import 'package:gesturetalk1/constants/app_colors.dart'; // <-- Make sure this import path is correct
 
 class AlarmModel {
   final TimeOfDay time;
@@ -291,7 +291,8 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pickTime(context),
         backgroundColor: theme.colorScheme.primary,
-        foregroundColor: isDark ? kPrimaryColor : Colors.white,
+        foregroundColor:
+            isDark ? const Color.fromRGBO(142, 38, 160, 1) : Colors.white,
         child: const Icon(Icons.add),
       ),
     );
