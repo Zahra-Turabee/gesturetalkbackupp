@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'signupscreen.dart';
+import 'package:gesturetalk1/config/routes/auth_checker.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,53 +16,57 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String errorMessage = '';
-  final _supabase = Supabase.instance.client;
-  bool isLoading = false;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  Future<void> login() async {
-    if (emailController.text.trim().isEmpty ||
-        passwordController.text.trim().isEmpty) {
-      setState(() {
-        errorMessage = 'Please enter both email and password.';
-      });
+  String errorMessage = '';
+  bool isLoading = false;
+  bool _obscurePassword = true;
+
+  Future<void> _login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() => errorMessage = 'Please enter email and password.');
+      return;
+    }
+
+    // ✅ Proper Internet Check
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      setState(() => errorMessage = 'No internet connection.');
       return;
     }
 
     setState(() {
-      isLoading = true;
       errorMessage = '';
+      isLoading = true;
     });
 
     try {
       final response = await _supabase.auth.signInWithPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: email,
+        password: password,
       );
 
-      if (response.session == null) {
-        setState(() {
-          errorMessage = 'Invalid email or password.';
-        });
+      if (response.user != null) {
+        Get.offAll(() => const AuthChecker());
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => DashboardScreen()),
-        );
+        setState(() => errorMessage = 'Invalid email or password.');
       }
     } on AuthException catch (e) {
       setState(() {
-        errorMessage = e.message;
+        if (e.message.toLowerCase().contains("invalid login credentials")) {
+          errorMessage = 'Invalid email or password.';
+        } else {
+          errorMessage = e.message;
+        }
       });
     } catch (e) {
-      setState(() {
-        errorMessage = 'Something went wrong. Please try again.';
-      });
-      print('Login Error: $e');
+      print('Login error: $e');
+      setState(() => errorMessage = 'Something went wrong. Please try again.');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
@@ -77,13 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
                 Image.asset('assets/images/logo.png', height: 95),
                 const SizedBox(height: 40),
 
-                // Email TextField
                 TextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -98,14 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: isDark ? Colors.white70 : Colors.grey,
                     ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 20),
 
-                // Password TextField
                 TextField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -119,11 +123,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       Icons.lock,
                       color: isDark ? Colors.white70 : Colors.grey,
                     ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: isDark ? Colors.white70 : Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                // Error Message
                 if (errorMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -133,11 +149,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                // Login Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : login,
+                    onPressed: isLoading ? null : _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
@@ -164,7 +179,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Sign-up link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

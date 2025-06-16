@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'loginscreen.dart';
@@ -13,17 +14,17 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _supabase = Supabase.instance.client;
+
   String errorMessage = '';
   bool isLoading = false;
+  bool _obscurePassword = true;
 
   Future<void> _signup() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() {
-        errorMessage = 'Please enter both email and password.';
-      });
+      setState(() => errorMessage = 'Please enter email and password.');
       return;
     }
 
@@ -33,15 +34,18 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isEmpty || result[0].rawAddress.isEmpty) {
+        throw SocketException("No Internet");
+      }
+
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
       );
 
       if (response.user == null) {
-        setState(() {
-          errorMessage = 'Signup failed. Please try again.';
-        });
+        setState(() => errorMessage = 'Signup failed. Please try again.');
       } else {
         ScaffoldMessenger.of(
           context,
@@ -53,13 +57,17 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } on AuthException catch (e) {
       setState(() {
-        errorMessage = e.message;
+        if (e.message.toLowerCase().contains('user already registered')) {
+          errorMessage = 'Email already in use.';
+        } else {
+          errorMessage = e.message;
+        }
       });
+    } on SocketException {
+      setState(() => errorMessage = 'No internet connection.');
     } catch (e) {
-      setState(() {
-        errorMessage = 'Something went wrong. Please try again.';
-      });
       print('Signup error: $e');
+      setState(() => errorMessage = 'Something went wrong. Please try again.');
     } finally {
       setState(() => isLoading = false);
     }
@@ -79,13 +87,12 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
                 Image.asset('assets/images/logo.png', height: 95),
                 const SizedBox(height: 40),
 
-                // Email
                 TextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -100,14 +107,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       color: isDark ? Colors.white70 : Colors.grey,
                     ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 20),
 
-                // Password
                 TextField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -121,11 +126,23 @@ class _SignupScreenState extends State<SignupScreen> {
                       Icons.lock,
                       color: isDark ? Colors.white70 : Colors.grey,
                     ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: isDark ? Colors.white70 : Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                // Error
                 if (errorMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -135,7 +152,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
 
-                // Signup Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -166,7 +182,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:gesturetalk1/constants/app_colors.dart';
+import 'package:gesturetalk1/config/routes/app_routes.dart'; // ✅ Added for AppRoutes.login
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -110,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         onPressed: () async {
                           await Supabase.instance.client.auth.signOut();
-                          Get.offAllNamed('/login');
+                          Get.offAllNamed(AppRoutes.login); // ✅ Clean logout
                         },
                         icon: const Icon(Icons.logout),
                         label: const Text("Logout"),

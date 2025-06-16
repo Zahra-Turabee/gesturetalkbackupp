@@ -27,6 +27,7 @@ dependencies:
   geolocator: ^14.0.1
   mailer: ^6.4.1
   location: ^8.0.0
+  connectivity_plus: ^5.0.2
 
   # Sir wali extra dependencies
   bottom_picker:
