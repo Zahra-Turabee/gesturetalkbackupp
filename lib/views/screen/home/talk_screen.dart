@@ -1,5 +1,9 @@
+// 📦 Required imports
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:tflite/tflite.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 class TalkScreen extends StatefulWidget {
@@ -12,8 +16,41 @@ class TalkScreen extends StatefulWidget {
 class _TalkScreenState extends State<TalkScreen> {
   final TextEditingController _controller = TextEditingController();
   final SupabaseClient supabase = Supabase.instance.client;
-
   List<Map<String, String>> messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel();
+  }
+
+  Future<void> loadModel() async {
+    await Tflite.loadModel(model: "assets/models/model.tflite");
+  }
+
+  Future<void> pickImageAndPredict() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.camera);
+
+    if (picked != null) {
+      var recognitions = await Tflite.runModelOnImage(
+        path: picked.path,
+        imageMean: 127.5,
+        imageStd: 127.5,
+        numResults: 1,
+        threshold: 0.5,
+      );
+
+      if (recognitions != null && recognitions.isNotEmpty) {
+        String detectedWord = recognitions[0]['label'];
+        setState(() {
+          messages.add({'type': 'output', 'text': detectedWord});
+        });
+      } else {
+        showError("Gesture not recognized.");
+      }
+    }
+  }
 
   void fetchVideo(String label) async {
     try {
@@ -89,6 +126,25 @@ class _TalkScreenState extends State<TalkScreen> {
                       ),
                     ),
                   );
+                } else if (msg['type'] == 'output') {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.shade100,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: Text(
+                        msg['text'] ?? '',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  );
                 } else if (msg['type'] == 'video') {
                   return Align(
                     alignment: Alignment.centerLeft,
@@ -153,6 +209,16 @@ class _TalkScreenState extends State<TalkScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: pickImageAndPredict,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text("Gesture"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
@@ -164,7 +230,6 @@ class _TalkScreenState extends State<TalkScreen> {
 
 class VideoWidget extends StatefulWidget {
   final String videoUrl;
-
   const VideoWidget({super.key, required this.videoUrl});
 
   @override
@@ -179,7 +244,6 @@ class _VideoWidgetState extends State<VideoWidget> {
   void initState() {
     super.initState();
     final encodedUrl = Uri.encodeFull(widget.videoUrl);
-
     _controller = VideoPlayerController.network(encodedUrl)
       ..initialize()
           .then((_) {
