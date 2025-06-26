@@ -1,0 +1,6 @@
+0 stop
+1 hello
+2 i am in pain
+3 good luck
+4 i love you
+5 i want to talk

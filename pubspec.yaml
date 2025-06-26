@@ -28,6 +28,7 @@ dependencies:
   mailer: ^6.4.1
   location: ^8.0.0
   connectivity_plus: ^5.0.2
+  image: ^4.1.3
 
   # Sir wali extra dependencies
   bottom_picker:
@@ -72,8 +73,8 @@ dependencies:
   http: 1.3.0
   flutter_inappwebview: ^6.0.0
 
-  # ✅ Model-related new dependencies (added now)
-  tflite: ^1.1.2
+  # ✅ Model-related dependencies (FIXED VERSION)
+  tflite_flutter: ^0.11.0  # Updated to latest compatible version
   image_picker: ^1.0.7
   path_provider: ^2.1.2
   path: ^1.9.0
@@ -87,6 +88,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/models/model.tflite
+    - assets/models/labels.txt
     - assets/images/
     - assets/offline_voices/
     - assets/gestures.json

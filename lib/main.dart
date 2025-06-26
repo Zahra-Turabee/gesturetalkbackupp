@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       themeMode: _themeController.theme, // This controls the global theme
       defaultTransition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 500),
-      initialRoute: AppRoutes.splash, // Define initial route here
+      initialRoute: AppRoutes.dashboard, // Define initial route here
       getPages: AppPages.pages, // Use the routes from AppPages
     );
   }
