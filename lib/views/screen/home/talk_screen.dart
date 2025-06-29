@@ -1,8 +1,6 @@
-// 📦 Required imports
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -18,37 +16,16 @@ class _TalkScreenState extends State<TalkScreen> {
   final SupabaseClient supabase = Supabase.instance.client;
   List<Map<String, String>> messages = [];
 
-  @override
-  void initState() {
-    super.initState();
-    loadModel();
-  }
-
-  Future<void> loadModel() async {
-    await Tflite.loadModel(model: "assets/models/model.tflite");
-  }
-
-  Future<void> pickImageAndPredict() async {
+  Future<void> pickImageFromCamera() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.camera);
 
     if (picked != null) {
-      var recognitions = await Tflite.runModelOnImage(
-        path: picked.path,
-        imageMean: 127.5,
-        imageStd: 127.5,
-        numResults: 1,
-        threshold: 0.5,
-      );
-
-      if (recognitions != null && recognitions.isNotEmpty) {
-        String detectedWord = recognitions[0]['label'];
-        setState(() {
-          messages.add({'type': 'output', 'text': detectedWord});
-        });
-      } else {
-        showError("Gesture not recognized.");
-      }
+      // If you want to do something with the image, you can add logic here.
+      // Currently just showing a chat bubble to indicate image was taken.
+      setState(() {
+        messages.add({'type': 'input', 'text': '📷 Gesture image captured'});
+      });
     }
   }
 
@@ -211,7 +188,7 @@ class _TalkScreenState extends State<TalkScreen> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
-                  onPressed: pickImageAndPredict,
+                  onPressed: pickImageFromCamera,
                   icon: const Icon(Icons.camera_alt),
                   label: const Text("Gesture"),
                   style: ElevatedButton.styleFrom(
