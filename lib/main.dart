@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:hive_flutter/hive_flutter.dart'; // Import Hive
+import 'package:hive_flutter/hive_flutter.dart';
 
 // Import your theme files
-
 import 'package:gesturetalk1/views/screen/home/dashboardscreen.dart';
+import 'package:gesturetalk1/views/screen/launch/splashscreen.dart';
 import 'package:gesturetalk1/config/theme/light_theme.dart';
 import 'package:gesturetalk1/config/theme/dark_theme.dart';
 
 // Import your controller for theme management
 import 'package:gesturetalk1/controller/theme_controller.dart';
+import 'package:gesturetalk1/controller/profile_controller.dart'; // <-- ADD THIS
 
 // Import the routes file and your splash screen
 import 'package:gesturetalk1/config/routes/app_routes.dart';
-import 'package:gesturetalk1/config/routes/app_pages.dart'; // Make sure this is correct
-//import 'package:gesturetalk1/views/screen/launch/splashscreen.dart';
+import 'package:gesturetalk1/config/routes/app_pages.dart';
 
 void main() async {
   await Hive.initFlutter(); // Initialize Hive
@@ -31,8 +31,10 @@ void main() async {
 
   // Initialize GetStorage
   await GetStorage.init();
-  // Initialize ThemeController globally
-  Get.put(ThemeController()); // This initializes the ThemeController globally
+
+  // Initialize controllers globally
+  Get.put(ThemeController()); // Theme controller
+  Get.put(ProfileController()); // <-- ADD THIS LINE
 
   runApp(const MyApp());
 }

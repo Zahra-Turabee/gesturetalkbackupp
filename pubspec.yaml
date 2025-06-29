@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Existing dependencies
+  # Core dependencies
   cupertino_icons: ^1.0.8
   permission_handler:
   flutter_local_notifications: ^19.1.0
@@ -30,11 +30,10 @@ dependencies:
   lottie: ^3.3.1
   animated_text_kit: ^4.2.3
   flutter_launcher_icons: ^0.14.4
-  # image to gesture feature 
   google_mlkit_text_recognition: ^0.15.0
   http: ^1.4.0
 
-  # Sir wali extra dependencies
+  # Extra UI dependencies
   bottom_picker:
   country_code_picker:
   dropdown_button2:
@@ -67,7 +66,6 @@ dependencies:
   persistent_bottom_nav_bar_v2:
   dotted_border:
   flutter_spinkit: ^5.2.0
-  get_storage: ^2.1.1
   video_player: ^2.10.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -75,11 +73,8 @@ dependencies:
   lucide_icons: ^0.257.0
   youtube_player_flutter: ^9.1.1
   flutter_inappwebview: ^6.0.0
-
-  # ✅ Model-related new dependencies (added now)
+  get_storage: ^2.1.1
   image_picker: ^1.0.7
-  path_provider: ^2.1.2
-  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
@@ -154,5 +149,5 @@ flutter:
     - assets/offlinegestures/good/
     - assets/offlinegestures/when/
     - assets/flags/
-
-  
+    - assets/flags/pakistan.png
+    - assets/flags/uk.png
