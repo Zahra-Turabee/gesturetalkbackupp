@@ -372,12 +372,14 @@
 // }
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:gesturetalk1/constants/app_colors.dart';
 import 'package:gesturetalk1/controller/theme_controller.dart';
+import 'package:gesturetalk1/controller/profile_controller.dart'; // ADD THIS
 import 'package:gesturetalk1/views/screen/home/profilescreen.dart';
 
 import 'talk_screen.dart';
@@ -440,20 +442,29 @@ class DashboardScreen extends GetView<ThemeController> {
               decoration: BoxDecoration(
                 color: isDark ? kPrimaryColor.withOpacity(0.8) : kPrimaryColor,
               ),
-              child: FutureBuilder(
-                future: Future.value(Supabase.instance.client.auth.currentUser),
-                builder: (context, snapshot) {
-                  final user = snapshot.data;
-                  final metadata = user?.userMetadata ?? {};
-                  final name = metadata['name'] ?? 'User';
+              child: GetX<ProfileController>(
+                builder: (controller) {
+                  final profileImagePath = controller.imagePath.value;
+                  final name = controller.name.value;
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 60,
-                        color: Colors.white,
+                      CircleAvatar(
+                        radius: 35,
+                        backgroundImage:
+                            profileImagePath != null
+                                ? FileImage(File(profileImagePath))
+                                : null,
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        child:
+                            profileImagePath == null
+                                ? const Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: Colors.white,
+                                )
+                                : null,
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -461,6 +472,7 @@ class DashboardScreen extends GetView<ThemeController> {
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -617,8 +629,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                   _slideImages[_currentIndex],
                   key: ValueKey<String>(_slideImages[_currentIndex]),
                   width: double.infinity,
-                  height: 200, // <- chhoti aur fixed height
-                  fit: BoxFit.contain, // <- contain for uniform size
+                  height: 200,
+                  fit: BoxFit.contain,
                 ),
               ),
               Positioned(

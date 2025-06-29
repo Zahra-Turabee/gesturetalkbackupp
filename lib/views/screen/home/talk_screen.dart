@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 import 'dart:typed_data';
 import 'dart:math' as math; // ⭐ YE NEW IMPORT ADD KAREIN
 import 'package:flutter/material.dart';
@@ -658,5 +658,24 @@ class _VideoWidgetState extends State<VideoWidget> {
           ),
           child: const Center(child: CircularProgressIndicator()),
         );
+  }
+} */
+
+import 'package:flutter/material.dart';
+
+class TalkScreen extends StatelessWidget {
+  const TalkScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Talk'),
+        backgroundColor: Color.fromARGB(255, 142, 38, 160),
+      ),
+      body: const Center(
+        child: Text('Talk Screen', style: TextStyle(fontSize: 24)),
+      ),
+    );
   }
 }
