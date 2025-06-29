@@ -166,13 +166,12 @@
 //     );
 //   }
 // }
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:video_player/video_player.dart';
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:gesturetalk1/constants/app_colors.dart';
 
@@ -186,6 +185,7 @@ class ImageToGestureScreen extends StatefulWidget {
 class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
   final ImagePicker _picker = ImagePicker();
   final ScrollController _scrollController = ScrollController();
+  final SupabaseClient supabase = Supabase.instance.client;
 
   List<Map<String, dynamic>> chatList = [];
 
@@ -194,14 +194,14 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
 
-      // Add image bubble on right and loader on left
+      // Add image bubble on right and show loader
       setState(() {
         chatList.add({"type": "image", "data": imageFile});
         chatList.add({"type": "loading"});
       });
       _scrollToBottom();
 
-      // Extract text using MLKit
+      // Start text recognition
       final inputImage = InputImage.fromFile(imageFile);
       final textRecognizer = TextRecognizer(
         script: TextRecognitionScript.latin,
@@ -211,53 +211,87 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
       );
       await textRecognizer.close();
 
+      // Combine extracted text
       String extractedText = recognizedText.text.trim();
       if (extractedText.isEmpty) {
         extractedText = "No text found!";
+        // Remove loader and show not found message
+        setState(() {
+          chatList.removeWhere((item) => item["type"] == "loading");
+          chatList.add({
+            'type': 'notfound',
+            'data': "⚠️ No text found in image",
+          });
+        });
+        _scrollToBottom();
+        return;
       }
 
-      // Send text to FastAPI backend
-      try {
-        final response = await http.post(
-          Uri.parse(
-            "http://192.168.0.103:8000/match",
-          ), // Change to your IP if needed
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"text": extractedText}),
-        );
+      // Remove loader and fetch video directly (don't show extracted text)
+      setState(() {
+        chatList.removeWhere((item) => item["type"] == "loading");
+      });
 
-        if (response.statusCode == 200) {
-          final result = jsonDecode(response.body);
-          String videoResult =
-              result["results"]
-                  .toString(); // Adjust based on response structure
-          replaceLoaderWithText(videoResult);
-        } else {
-          replaceLoaderWithText("Server error: ${response.statusCode}");
-        }
-      } catch (e) {
-        replaceLoaderWithText("Connection error: ${e.toString()}");
-      }
-
-      _scrollToBottom();
+      // Now fetch video for the extracted text
+      await fetchSingleVideo(extractedText);
     }
   }
 
-  void replaceLoaderWithText(String text) {
-    setState(() {
-      int index = chatList.indexWhere((item) => item["type"] == "loading");
-      if (index != -1) {
-        chatList[index] = {"type": "text", "data": text};
+  Future<void> fetchVideosForText(String text) async {
+    // This function is no longer needed as we only search once
+  }
+
+  Future<void> fetchSingleVideo(String label) async {
+    try {
+      final response =
+          await supabase
+              .from('i2_gesture_videos')
+              .select()
+              .eq('label', label.toLowerCase())
+              .maybeSingle();
+
+      final videoUrl =
+          response != null ? response['image_url'] as String? : null;
+
+      // Remove loader first
+      setState(() {
+        chatList.removeWhere((item) => item["type"] == "loading");
+      });
+
+      if (videoUrl != null && videoUrl.isNotEmpty) {
+        setState(() {
+          chatList.add({'type': 'video', 'url': videoUrl, 'label': label});
+        });
+        _scrollToBottom();
+      } else {
+        setState(() {
+          chatList.add({'type': 'notfound', 'data': "⚠️ Gesture not found"});
+        });
+        _scrollToBottom();
       }
-    });
+    } catch (e) {
+      // Remove loader and show error
+      setState(() {
+        chatList.removeWhere((item) => item["type"] == "loading");
+        chatList.add({'type': 'notfound', 'data': "⚠️ Error loading gesture"});
+      });
+      _scrollToBottom();
+      showError("Error fetching gesture: $e");
+    }
+  }
+
+  void showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
@@ -290,7 +324,40 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
           ),
         ],
       );
+    } else if (item["type"] == "video") {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 250,
+            height: 200,
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: VideoWidget(videoUrl: item['url']!),
+          ),
+        ],
+      );
+    } else if (item["type"] == "notfound") {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                item["data"],
+                style: const TextStyle(color: Colors.black87),
+              ),
+            ),
+          ),
+        ],
+      );
     } else {
+      // Text bubble
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -341,7 +408,7 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
             ),
           ),
 
-          // Floating camera button
+          // Camera Button
           Positioned(
             bottom: 20,
             right: 20,
@@ -355,5 +422,55 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
         ],
       ),
     );
+  }
+}
+
+// Video Widget (same as in first code)
+class VideoWidget extends StatefulWidget {
+  final String videoUrl;
+  const VideoWidget({super.key, required this.videoUrl});
+
+  @override
+  State<VideoWidget> createState() => _VideoWidgetState();
+}
+
+class _VideoWidgetState extends State<VideoWidget> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final encodedUrl = Uri.encodeFull(widget.videoUrl);
+    _controller = VideoPlayerController.network(encodedUrl)
+      ..initialize()
+          .then((_) {
+            if (mounted) {
+              setState(() {
+                _isInitialized = true;
+              });
+              _controller.setLooping(true);
+              _controller.play();
+            }
+          })
+          .catchError((e) {
+            debugPrint("Video initialization failed: $e");
+          });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isInitialized
+        ? AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        )
+        : const Center(child: CircularProgressIndicator());
   }
 }
