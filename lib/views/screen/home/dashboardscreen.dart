@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:gesturetalk1/constants/app_colors.dart';
 import 'package:gesturetalk1/controller/theme_controller.dart';
-import 'package:gesturetalk1/controller/profile_controller.dart'; // ADD THIS
+import 'package:gesturetalk1/controller/profile_controller.dart';
 import 'package:gesturetalk1/views/screen/home/profilescreen.dart';
 
 import 'talk_screen.dart';
@@ -24,7 +24,7 @@ class DashboardScreen extends GetView<ThemeController> {
     {
       'title': 'Talk',
       'imagePath': 'assets/images/talk_icon.png',
-      'screen': TalkScreen(),
+      'screen': SignToTextScreen(),
     },
     {
       'title': 'Image to Gesture',
@@ -71,8 +71,8 @@ class DashboardScreen extends GetView<ThemeController> {
               ),
               child: GetX<ProfileController>(
                 builder: (controller) {
-                  final profileImagePath = controller.imagePath.value;
                   final name = controller.name.value;
+                  final imagePath = controller.imagePath.value;
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -80,12 +80,12 @@ class DashboardScreen extends GetView<ThemeController> {
                       CircleAvatar(
                         radius: 35,
                         backgroundImage:
-                            profileImagePath != null
-                                ? FileImage(File(profileImagePath))
+                            imagePath != null
+                                ? FileImage(File(imagePath))
                                 : null,
                         backgroundColor: Colors.white.withOpacity(0.2),
                         child:
-                            profileImagePath == null
+                            imagePath == null
                                 ? const Icon(
                                   Icons.person,
                                   size: 40,

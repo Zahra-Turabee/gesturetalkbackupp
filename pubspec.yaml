@@ -29,7 +29,6 @@ dependencies:
   connectivity_plus: ^5.0.2
   lottie: ^3.3.1
   animated_text_kit: ^4.2.3
-  flutter_launcher_icons: ^0.14.4
   google_mlkit_text_recognition: ^0.15.0
   http: ^1.4.0
 
@@ -75,6 +74,10 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   get_storage: ^2.1.1
   image_picker: ^1.0.7
+
+  # New packages for sign detection
+  tflite_flutter: ^0.11.0
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:
@@ -151,3 +154,7 @@ flutter:
     - assets/flags/
     - assets/flags/pakistan.png
     - assets/flags/uk.png
+    - assets/tfmodel/model_unquant.tflite
+    - assets/tfmodel/model_unquant1.tflite
+    - assets/tfmodel/labels.txt
+    - assets/tfmodel/labels1.txt

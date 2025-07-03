@@ -22,7 +22,7 @@ class AppPages {
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
     GetPage(name: AppRoutes.signup, page: () => const SignupScreen()),
     GetPage(name: AppRoutes.dashboard, page: () => DashboardScreen()),
-    GetPage(name: AppRoutes.talk, page: () => const TalkScreen()),
+    GetPage(name: AppRoutes.talk, page: () => SignToTextScreen()),
     GetPage(
       name: AppRoutes.imageToGesture,
       page: () => const ImageToGestureScreen(),

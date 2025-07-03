@@ -209,7 +209,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
-                                      Icons.camera_alt,
+                                      //Icons.camera_alt,
+                                      Icons.edit,
                                       color: Colors.white,
                                       size: 18,
                                     ),
