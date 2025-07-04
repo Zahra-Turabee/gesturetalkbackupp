@@ -8,7 +8,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:gesturetalk1/constants/app_colors.dart'; // <-- Make sure this import path is correct
 
 class AlarmModel {
   final TimeOfDay time;
@@ -105,34 +104,8 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     );
 
     if (picked != null) {
-      final labelController = TextEditingController();
-
-      await showDialog(
-        context: context,
-        builder:
-            (_) => AlertDialog(
-              title: const Text("Alarm Details"),
-              content: TextField(
-                controller: labelController,
-                decoration: const InputDecoration(labelText: "Label"),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Save"),
-                ),
-              ],
-            ),
-      );
-
       final label =
-          labelController.text.trim().isEmpty
-              ? "Alarm at ${picked.format(context)}"
-              : labelController.text.trim();
+          "Alarm at ${picked.format(context)}"; // Direct label, no dialog
 
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       final alarm = AlarmModel(picked, label, id);
@@ -216,6 +189,14 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     setState(() => _alarmGoingOff = false);
   }
 
+  void _snoozeAlarm() {
+    setState(() => _alarmGoingOff = false);
+    _showMessage("Snoozed for 5 minutes");
+    Future.delayed(const Duration(minutes: 5), () {
+      if (mounted) _startFlashlightAndVibration();
+    });
+  }
+
   void _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
@@ -226,11 +207,7 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flashlight Alarm'),
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        foregroundColor: theme.appBarTheme.foregroundColor,
-      ),
+      appBar: AppBar(title: const Text('Flashlight Alarm')),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
@@ -239,14 +216,28 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
               width: double.infinity,
               color: Colors.red,
               padding: const EdgeInsets.all(10),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.red,
-                ),
-                onPressed: _stopAlarm,
-                icon: const Icon(Icons.stop),
-                label: const Text("Stop Alarm"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.red,
+                    ),
+                    onPressed: _stopAlarm,
+                    icon: const Icon(Icons.stop),
+                    label: const Text("Stop Alarm"),
+                  ),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue,
+                    ),
+                    onPressed: _snoozeAlarm,
+                    icon: const Icon(Icons.snooze),
+                    label: const Text("Snooze 5 min"),
+                  ),
+                ],
               ),
             ),
           Expanded(

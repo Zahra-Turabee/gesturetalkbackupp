@@ -24,7 +24,7 @@ class DashboardScreen extends GetView<ThemeController> {
     {
       'title': 'Talk',
       'imagePath': 'assets/images/talk_icon.png',
-      'screen': SignToTextScreen(),
+      'screen': GestureTalkScreen(),
     },
     {
       'title': 'Image to Gesture',
