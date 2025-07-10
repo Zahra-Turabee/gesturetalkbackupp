@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:torch_light/torch_light.dart';
@@ -42,6 +42,7 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
       FlutterLocalNotificationsPlugin();
   final List<AlarmModel> _alarms = [];
   bool _alarmGoingOff = false;
+  Timer? _flashlightTimer;
 
   @override
   void initState() {
@@ -67,34 +68,15 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     await _notificationsPlugin.initialize(
       settings,
       onDidReceiveNotificationResponse: (response) {
-        _startFlashlightAndVibration();
+        if (response.actionId == 'STOP') {
+          _stopAlarm();
+        } else if (response.actionId == 'SNOOZE') {
+          _snoozeAlarm();
+        } else {
+          _startFlashlightAndVibration();
+        }
       },
     );
-  }
-
-  Future<void> _startFlashlightAndVibration() async {
-    if (_alarmGoingOff) return;
-    setState(() => _alarmGoingOff = true);
-
-    try {
-      for (int i = 0; i < 8 && _alarmGoingOff; i++) {
-        try {
-          await TorchLight.enableTorch();
-          await Future.delayed(const Duration(milliseconds: 300));
-          await TorchLight.disableTorch();
-        } catch (_) {}
-
-        try {
-          if (await Vibration.hasVibrator()) {
-            Vibration.vibrate(duration: 500);
-          }
-        } catch (_) {}
-
-        await Future.delayed(const Duration(milliseconds: 600));
-      }
-    } catch (_) {}
-
-    setState(() => _alarmGoingOff = false);
   }
 
   Future<void> _pickTime(BuildContext context) async {
@@ -104,11 +86,10 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     );
 
     if (picked != null) {
-      final label =
-          "Alarm at ${picked.format(context)}"; // Direct label, no dialog
-
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final label = "Alarm at ${picked.format(context)}";
       final alarm = AlarmModel(picked, label, id);
+
       setState(() => _alarms.add(alarm));
       _scheduleAlarm(alarm);
       _saveAlarms();
@@ -134,18 +115,31 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     const androidDetails = AndroidNotificationDetails(
       'alarm_channel',
       'Alarm Notifications',
+      channelDescription: 'Flashlight Alarm Notifications',
       importance: Importance.max,
       priority: Priority.high,
       playSound: false,
       fullScreenIntent: true,
-      enableLights: true,
       visibility: NotificationVisibility.public,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'STOP',
+          'Stop Alarm',
+          showsUserInterface: false,
+          cancelNotification: true,
+        ),
+        AndroidNotificationAction(
+          'SNOOZE',
+          'Snooze 5 min',
+          showsUserInterface: false,
+        ),
+      ],
     );
 
     await _notificationsPlugin.zonedSchedule(
       alarm.id,
       alarm.label,
-      '',
+      'Tap to stop or snooze',
       tzTime,
       const NotificationDetails(android: androidDetails),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -157,6 +151,47 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     Future.delayed(tzTime.difference(DateTime.now()), () {
       if (mounted) _startFlashlightAndVibration();
     });
+  }
+
+  void _startFlashlightAndVibration() {
+    if (_alarmGoingOff) return;
+    setState(() => _alarmGoingOff = true);
+
+    _flashlightTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) async {
+      try {
+        if (timer.tick % 2 == 0) {
+          await TorchLight.enableTorch();
+        } else {
+          await TorchLight.disableTorch();
+        }
+      } catch (_) {}
+    });
+
+    Vibration.vibrate(pattern: [0, 500, 500], repeat: 0);
+  }
+
+  void _stopAlarm() {
+    _flashlightTimer?.cancel();
+    TorchLight.disableTorch();
+    Vibration.cancel();
+    setState(() => _alarmGoingOff = false);
+    _showMessage("Alarm stopped");
+  }
+
+  Future<void> _snoozeAlarm() async {
+    _stopAlarm();
+    final now = DateTime.now().add(const Duration(minutes: 5));
+    final snoozeTime = TimeOfDay(hour: now.hour, minute: now.minute);
+
+    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final alarm = AlarmModel(snoozeTime, "Snoozed Alarm", id);
+
+    setState(() => _alarms.add(alarm));
+    await _scheduleAlarm(alarm);
+    _saveAlarms();
+    _showMessage("Snoozed for 5 minutes");
   }
 
   Future<void> _saveAlarms() async {
@@ -185,20 +220,16 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     _saveAlarms();
   }
 
-  void _stopAlarm() {
-    setState(() => _alarmGoingOff = false);
-  }
-
-  void _snoozeAlarm() {
-    setState(() => _alarmGoingOff = false);
-    _showMessage("Snoozed for 5 minutes");
-    Future.delayed(const Duration(minutes: 5), () {
-      if (mounted) _startFlashlightAndVibration();
-    });
-  }
-
   void _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  @override
+  void dispose() {
+    _flashlightTimer?.cancel();
+    TorchLight.disableTorch();
+    Vibration.cancel();
+    super.dispose();
   }
 
   @override
@@ -207,8 +238,11 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Flashlight Alarm')),
-      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text('Flashlight Alarm'),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+      ),
       body: Column(
         children: [
           if (_alarmGoingOff)
@@ -216,28 +250,14 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
               width: double.infinity,
               color: Colors.red,
               padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.red,
-                    ),
-                    onPressed: _stopAlarm,
-                    icon: const Icon(Icons.stop),
-                    label: const Text("Stop Alarm"),
-                  ),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue,
-                    ),
-                    onPressed: _snoozeAlarm,
-                    icon: const Icon(Icons.snooze),
-                    label: const Text("Snooze 5 min"),
-                  ),
-                ],
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                ),
+                onPressed: _stopAlarm,
+                icon: const Icon(Icons.stop),
+                label: const Text("Stop Alarm"),
               ),
             ),
           Expanded(
@@ -283,7 +303,7 @@ class _FlashlightAlarmScreenState extends State<FlashlightAlarmScreen> {
         onPressed: () => _pickTime(context),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor:
-            isDark ? const Color.fromRGBO(142, 38, 160, 1) : Colors.white,
+            isDark ? const Color.fromARGB(255, 142, 38, 160) : Colors.white,
         child: const Icon(Icons.add),
       ),
     );

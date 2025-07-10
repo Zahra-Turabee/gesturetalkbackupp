@@ -31,6 +31,7 @@ dependencies:
   animated_text_kit: ^4.2.3
   google_mlkit_text_recognition: ^0.15.0
   http: ^1.4.0
+  timezone: ^0.10.1 # ✅ UPGRADED for flutter_local_notifications compatibility
 
   # Extra UI dependencies
   bottom_picker:
@@ -78,6 +79,7 @@ dependencies:
   # New packages for sign detection
   tflite_flutter: ^0.11.0
   image: ^4.1.7
+  camera: ^0.10.5+9
 
 dev_dependencies:
   flutter_test:
@@ -158,3 +160,9 @@ flutter:
     - assets/tfmodel/model_unquant1.tflite
     - assets/tfmodel/labels.txt
     - assets/tfmodel/labels1.txt
+    - assets/videos/entertainment.mp4
+    - assets/videos/flashlightalarm.mp4
+    - assets/videos/offlinemode.mp4
+    - assets/videos/sossystem.mp4
+    - assets/videos/imagetogesture.mp4
+    - assets/videos/talk.mp4

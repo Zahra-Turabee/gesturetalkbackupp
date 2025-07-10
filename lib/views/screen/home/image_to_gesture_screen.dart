@@ -172,7 +172,7 @@ class _ImageToGestureScreenState extends State<ImageToGestureScreen> {
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: VideoWidget(
               videoUrl: item['url']!,
-              mute: true, // 👈 Mute video here
+              mute: true, // ✅ Video muted
             ),
           ),
         ],
@@ -288,7 +288,7 @@ class _VideoWidgetState extends State<VideoWidget> {
                 _isInitialized = true;
               });
               _controller.setLooping(true);
-              _controller.setVolume(widget.mute ? 0 : 1); // 👈 Volume set here
+              _controller.setVolume(widget.mute ? 0 : 1); // ✅ Volume set here
               _controller.play();
             }
           })

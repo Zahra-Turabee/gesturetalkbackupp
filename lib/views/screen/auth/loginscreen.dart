@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
 import 'signupscreen.dart';
 import 'package:gesturetalk1/config/routes/auth_checker.dart';
 

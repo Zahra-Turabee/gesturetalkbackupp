@@ -28,7 +28,7 @@ class _EntertainmentScreenState extends State<EntertainmentScreen> {
       {'id': 'M6zMVvpPqxQ'},
       {'id': 'QmKnQjBf8wM'},
       {'id': 'fK3cBbJ7cPI'},
-      {'id': 'tsI4_jrkorg'},
+      {'id': 'MyTJaclSJgo'}, // 👈 Replaced last video ID here
     ],
     'Comedy': [
       {'id': 'k3qLNv9PyNM'},
@@ -77,7 +77,7 @@ class _EntertainmentScreenState extends State<EntertainmentScreen> {
       {'id': 'g2Z9YogD43o'},
       {'id': 'ILJmyV3LQM8'},
       {'id': 'd0SkbVYRrxo'},
-      {'id': '99_Vp95c3sE'},
+      {'id': 'pgxmPoVyj80'},
       {'id': 'zxHMWXSTfu0'},
       {'id': 'Tsp6FxJtjuA'},
       {'id': 'xqESXxfKv8o'},

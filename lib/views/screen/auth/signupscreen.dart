@@ -1,7 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'loginscreen.dart';
+import 'package:gesturetalk1/config/routes/auth_checker.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -13,18 +15,63 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final _supabase = Supabase.instance.client;
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   String errorMessage = '';
   bool isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  /// Password validator
+  String? validatePassword(String password) {
+    if (password.isEmpty) {
+      return 'Password cannot be empty.';
+    }
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters.';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return 'Password must contain at least one uppercase letter.';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      return 'Password must contain at least one lowercase letter.';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return 'Password must contain at least one number.';
+    }
+    if (!RegExp(r'[!@#\$&*~%^]').hasMatch(password)) {
+      return 'Password must contain at least one special character.';
+    }
+    return null;
+  }
 
   Future<void> _signup() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      setState(() => errorMessage = 'Please enter email and password.');
+    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      setState(() => errorMessage = 'Please fill in all fields.');
+      return;
+    }
+
+    if (password != confirmPassword) {
+      setState(() => errorMessage = 'Passwords do not match.');
+      return;
+    }
+
+    final validationError = validatePassword(password);
+    if (validationError != null) {
+      setState(() => errorMessage = validationError);
+      return;
+    }
+
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      setState(() => errorMessage = 'No internet connection.');
       return;
     }
 
@@ -34,37 +81,18 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     try {
-      final result = await InternetAddress.lookup('example.com');
-      if (result.isEmpty || result[0].rawAddress.isEmpty) {
-        throw SocketException("No Internet");
-      }
-
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
       );
 
-      if (response.user == null) {
-        setState(() => errorMessage = 'Signup failed. Please try again.');
+      if (response.user != null) {
+        Get.offAll(() => const AuthChecker());
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Signup successful!')));
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+        setState(() => errorMessage = 'Signup failed. Please try again.');
       }
     } on AuthException catch (e) {
-      setState(() {
-        if (e.message.toLowerCase().contains('user already registered')) {
-          errorMessage = 'Email already in use.';
-        } else {
-          errorMessage = e.message;
-        }
-      });
-    } on SocketException {
-      setState(() => errorMessage = 'No internet connection.');
+      setState(() => errorMessage = e.message);
     } catch (e) {
       print('Signup error: $e');
       setState(() => errorMessage = 'Something went wrong. Please try again.');
@@ -90,6 +118,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Image.asset('assets/images/logooo.png', height: 95),
                 const SizedBox(height: 40),
 
+                // Email field
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -110,6 +139,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 20),
 
+                // Password field
                 TextField(
                   controller: passwordController,
                   obscureText: _obscurePassword,
@@ -141,6 +171,40 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
+
+                // Confirm Password field
+                TextField(
+                  controller: confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[700],
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.lock_outline,
+                      color: isDark ? Colors.white70 : Colors.grey,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: isDark ? Colors.white70 : Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 30),
 
                 if (errorMessage.isNotEmpty)
@@ -149,6 +213,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Text(
                       errorMessage,
                       style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
                     ),
                   ),
 
@@ -193,11 +258,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
+                          MaterialPageRoute(builder: (_) => LoginScreen()),
                         );
                       },
                       child: const Text('Login'),
